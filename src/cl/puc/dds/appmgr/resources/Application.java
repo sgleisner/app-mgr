@@ -11,6 +11,7 @@ import cl.puc.dds.appmgr.external.IResourceMgr;
 
 public abstract class Application{
 	//probando el gittttttt
+	//probando 22
 	String appID; /*Permite reconocer la misma aplicación en diferentes dispositivos. Ejemplo: Angry birds siempre tendrá id "AngryBirds01" */
 	String version; 
 	
