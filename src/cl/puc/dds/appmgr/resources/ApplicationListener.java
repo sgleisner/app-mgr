@@ -38,4 +38,20 @@ public class ApplicationListener {
 	}
 
 
+	/** Exigencias de IAppObs en ResourceMrg equivalente a este ApplicationListener */
+	public void resourceFinished(int resource_id, Object object) {
+		// TODO		
+	}
+
+	public void resourceFailed(int resource_id, String error) {
+		// TODO
+	}
+
+	public void resourceInterrupted(int resource_id, String error) {
+		// TODO
+	}
+
+	/**Fin de las exigencias*/
+	
+	
 }
