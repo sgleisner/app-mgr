@@ -28,19 +28,19 @@ public abstract class Application{
 	IPersistenceMgr persistenceMgr;
 	IResourceMgr resourceMgr;
 	IUserMgr userMgr;
-	
+
 	ApplicationDaemon deamon; /*Thread que corre métodos de rutina (persistencia, revisar dispositivos que se caen, etc.)*/
 
 	// Lista con recursos de otros dispotivos.
 	ArrayList<IResource> foreignResources = new ArrayList<IResource>();
 
-	
+
 	// Lista de dispositivos actualmente conectados a la "red" de la aplicación
 	// Key: ID del dispositivo, Value: El dispositivo mismo (más su estado en esta aplicación)
 	HashMap<String, DeviceState> connectedDevices = new HashMap<String, DeviceState>(); 
 
-	
-	
+
+
 	/**
 	 * Devuelve la lista con referencias 
 	 * @return ArrayList con todos los recursos
@@ -48,8 +48,8 @@ public abstract class Application{
 	public ArrayList<IResource> getAllForeignResources(){
 		return foreignResources;		
 	}
-	
-	
+
+
 	/**
 	 * Este método debe ser llamado por el UserMgr para actualizar nuestra lista
 	 * local de recursos foráneos (de otros dispositivos).
@@ -58,9 +58,67 @@ public abstract class Application{
 	public void setForeignResources(ArrayList<IResource> res){
 		this.foreignResources = res;
 	}
+
+
+	public boolean userResource(IResource r){
+
+		String id = state.getDevice().getId();
+		
+		Object amm = new AMMessage(id, "CONSUME" , r); 
+		// CONSUME indica que se va a pedir "usar" el recurso. Aquí podrían ir otros parámetros
+		// dependiendo del recurso. Ejemplo "burdo": Consumir foto en baja resolución. "CONSUME_LOWRES".
+
+		// TODO CommMgr lo implementa lanzando una excpetion o nos devuelve un boolean?
+		// por ahora asumimos exception:
+
+		try{
+			this.communicationMgr.sendObject(amm , r.getOwnerId());
+			return true;
+		}catch(Exception e){
+			return false;
+		}
+
+
+	}
 	
 	
+	public HashMap<IResource, Object> resourcesFlags = new HashMap<IResource, Object>();
 	
+	public HashMap<IResource, Object> getResourcesFlags() {
+		return resourcesFlags;
+	}
+
+
+	public void setResourcesFlags(HashMap<IResource, Object> resourcesFlags) {
+		this.resourcesFlags = resourcesFlags;
+	}
+
+
+	public Object recieveMesagge(AMMessage amm){
+		
+		if(amm.action.equals("CONSUME")){
+			
+			IResource r = (IResource) amm.pack;
+			
+			// En este ejemplo sacaremos una foto
+			resourceMgr.resourceAction(r.getId(), 0, null);
+			
+			if(!resourcesFlags.containsKey(r)){
+				resourcesFlags.put(r, null);
+			}
+			
+			Object respond = resourcesFlags.get(r);
+			
+			while(respond == null){				
+			}
+			
+			return respond;			
+		}
+		
+		return null;
+	}
+
+
 	public ICommunicationMgr getCommunicationMgr() {
 		return communicationMgr;
 	}
@@ -97,7 +155,7 @@ public abstract class Application{
 	public void addDevice(DeviceState deviceState){
 		this.connectedDevices.put(deviceState.getDevice().getId() , deviceState);
 	}
-	
+
 	public boolean removeDevice(DeviceState deviceState){
 		for( String i : connectedDevices.keySet() ){
 			if(i.equals(deviceState.getDevice().getId())){
@@ -107,7 +165,7 @@ public abstract class Application{
 		}
 		return false;
 	}
-	
+
 
 
 
@@ -115,7 +173,7 @@ public abstract class Application{
 	public void saveAppState(){
 		state.setToken(persistenceMgr.save(state.getUserID(), state.getDevice().getId(), state.getData()));
 	}
-	
+
 	public void loadAppState(byte[] token){
 		persistenceMgr.retriveByDigest(token);
 	}

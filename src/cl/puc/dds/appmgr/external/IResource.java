@@ -13,5 +13,8 @@ public interface IResource {
 	public int getStatus();
 	public void setId(int id);
 	/** Fin exigencias */
+	public int getOwnerId();
+	public int getId();
+	
 	
 }

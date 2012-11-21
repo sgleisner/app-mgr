@@ -7,7 +7,7 @@ import cl.puc.dds.appmgr.external.IApplication;
 import cl.puc.dds.appmgr.external.IDevice;
 import cl.puc.dds.appmgr.external.IResource;
 
-public class ApplicationListener {
+public class ApplicationListener{
 	
 	IApplication app;
 	
@@ -40,7 +40,11 @@ public class ApplicationListener {
 
 	/** Exigencias de IAppObs en ResourceMrg equivalente a este ApplicationListener */
 	public void resourceFinished(int resource_id, Object object) {
-		// TODO		
+		
+		// TODO fix next line:
+		IResource r = (IResource) new Object();
+		
+		this.app.getResourcesFlags().put( r , object);
 	}
 
 	public void resourceFailed(int resource_id, String error) {
