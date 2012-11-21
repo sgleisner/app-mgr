@@ -8,9 +8,14 @@ import cl.puc.dds.appmgr.external.ICommunicationMgr;
 import cl.puc.dds.appmgr.external.IPersistenceMgr;
 import cl.puc.dds.appmgr.external.IResource;
 import cl.puc.dds.appmgr.external.IResourceMgr;
+import cl.puc.dds.appmgr.external.IUserMgr;
 
+/**
+ * @author Maquina
+ *
+ */
 public abstract class Application{
-//cambio
+
 	String appID; /*Permite reconocer la misma aplicación en diferentes dispositivos. Ejemplo: Angry birds siempre tendrá id "AngryBirds01" */
 	String version; 
 
@@ -18,18 +23,44 @@ public abstract class Application{
 	DeviceState state; /*Contiene el dispositivo LOCAL donde corre esta app*/
 	ArrayList<IResource> resources = new ArrayList<IResource>(); /*Lista de dispositivos locales*/
 
-
-	// Acceso a los managers externos
+	// Acceso a los managers externos, Ojo: igual son los de ESTE dispotivo.
 	ICommunicationMgr communicationMgr;	
 	IPersistenceMgr persistenceMgr;
 	IResourceMgr resourceMgr;
-
+	IUserMgr userMgr;
+	
 	ApplicationDaemon deamon; /*Thread que corre métodos de rutina (persistencia, revisar dispositivos que se caen, etc.)*/
 
+	// Lista con recursos de otros dispotivos.
+	ArrayList<IResource> foreignResources = new ArrayList<IResource>();
+
+	
 	// Lista de dispositivos actualmente conectados a la "red" de la aplicación
 	// Key: ID del dispositivo, Value: El dispositivo mismo (más su estado en esta aplicación)
 	HashMap<String, DeviceState> connectedDevices = new HashMap<String, DeviceState>(); 
 
+	
+	
+	/**
+	 * Devuelve la lista con referencias 
+	 * @return ArrayList con todos los recursos
+	 */
+	public ArrayList<IResource> getAllForeignResources(){
+		return foreignResources;		
+	}
+	
+	
+	/**
+	 * Este método debe ser llamado por el UserMgr para actualizar nuestra lista
+	 * local de recursos foráneos (de otros dispositivos).
+	 * @param res Nueva lista de resources
+	 */
+	public void setForeignResources(ArrayList<IResource> res){
+		this.foreignResources = res;
+	}
+	
+	
+	
 	public ICommunicationMgr getCommunicationMgr() {
 		return communicationMgr;
 	}
