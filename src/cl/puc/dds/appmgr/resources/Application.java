@@ -16,6 +16,9 @@ import cl.puc.dds.appmgr.external.IUserMgr;
  */
 public abstract class Application{
 
+	public interface IUserMgr {
+
+	}
 	String appID; /*Permite reconocer la misma aplicación en diferentes dispositivos. Ejemplo: Angry birds siempre tendrá id "AngryBirds01" */
 	String version; 
 
