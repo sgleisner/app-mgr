@@ -100,6 +100,7 @@ public abstract class Application{
 
 	public Object recieveMesagge(AMMessage amm){
 		
+		
 		if(amm.action.equals("CONSUME")){
 			
 			IResource r = (IResource) amm.pack;
